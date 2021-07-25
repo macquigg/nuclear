@@ -1,0 +1,24 @@
+### meltdown1                                   DMQ 7/25/21
+### Simulating a power surge in a nuclear reactor
+
+# N(t) = N0 * k**(t/tau) # exponential growth or decay
+N0 = 1e10  # starting rate,fissions per usec
+tau = 3e-2 # chain reaction step time usec
+k0 = 0.993 # prompt neutron multiplication factor k at t = 0
+dkr = 1e-8 # rate of increase from control rods (1% per sec)
+# k(t) = k0 + dkr * t
+Np0 = N0 * k0   # prompt neutrons at t= 0
+Nd = N0 - Np0   # delayed neutrons, assumed constant
+# N(t + 1) = N(t) * k(t) + Nd
+
+t = 0; N = N0; k = k0 # initialize the reactor
+Ntot = 0       # total fissions in surge
+dt = 100       # simulation time step (usec)
+dk = dkr * dt  # dk with each step
+for m in range(1,3000):   
+    t += dt
+    k += dk
+    N = N * k + Nd
+    Ntot += N * dt
+    if (m % 100 == 0): print(t, N) # every 100th step
+print (Ntot / (N0*t))
